@@ -6,7 +6,6 @@ import torch
 import cv2
 import os
 
-
 img_root_dir = '../img_align_celeba'
 save_path = '../celeba_64'
 
@@ -29,7 +28,8 @@ ind = 0
 embed_map = {}
 
 for root, dirs, files in os.walk(img_root_dir):
-    for name in files:
+    files_len = len(files)
+    for idx, name in enumerate(files):
         if name.endswith('jpg') or name.endswith('png'):
             try:
                 p = os.path.join(root, name)
@@ -39,9 +39,11 @@ for root, dirs, files in os.walk(img_root_dir):
                     continue
                 for face in faces:
                     scaled_img = face.resize((64, 64), Image.ANTIALIAS)
-                    new_path = '%08d.jpg'%ind
+                    new_path = '%08d.jpg' % ind
                     ind += 1
-                    print(new_path)
-                    scaled_img.save(os.path.join(save_path, new_path))
+                    new_path = os.path.join(save_path, new_path)
+                    if idx % 1000 == 0:
+                        print('{}/{}: {}'.format(idx, files_len, new_path))
+                    scaled_img.save(new_path)
             except Exception as e:
                 continue
